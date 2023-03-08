@@ -1,5 +1,6 @@
 package net.meetsky.pages;
 
+import org.junit.Assert;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -7,19 +8,12 @@ import java.util.List;
 
 public class DashboardPage extends BasePage {
 
-    @FindBy(xpath = "//div[@class='contact']")
-    public List<WebElement> contacts;
-
-    public boolean verifyContactNames() {
-        boolean result = true;
-        if (contacts.size() >= 2) {
-            for (WebElement eachContact : contacts) {
-                if (!eachContact.isDisplayed()) {
-                    result = false;
-                    break;
-                }
+    public void verifyContactNames() {
+        if (contactNames.size()>=2) {
+            for (WebElement eachContactName : contactNames) {
+                Assert.assertTrue(eachContactName.isDisplayed());
             }
         }
-        return result;
     }
+
 }
