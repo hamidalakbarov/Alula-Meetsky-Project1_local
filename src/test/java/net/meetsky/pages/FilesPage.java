@@ -8,6 +8,8 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
+import java.util.List;
+
 public class FilesPage extends BasePage {
 
     @FindBy(css = "button.settings-button")
@@ -69,15 +71,65 @@ public class FilesPage extends BasePage {
     @FindBy(linkText = "Deleted files")
     public WebElement deletedFileSubModule;
 
-    String deletedFileText;
+    public String deletedFileText;
 
     public void getFileText() {
         deletedFileText = firstFIleOrFolder.getText();
     }
 
     public boolean deletedFileIsDisplayed() {
-        return Driver.getDriver().findElement(By.xpath("//span[@title='" + deletedFileText + "']")).isDisplayed();
+        return Driver.getDriver().findElement(By.xpath("//span[@title='"
+                + deletedFileText + "']")).isDisplayed();
     }
 
+    @FindBy(xpath = "//a[contains(@class,'button new')]")
+    public WebElement addIcon;
+
+    public void clickNewFileMenuItem(String menuItem) {
+        String locator;
+        switch (menuItem.toLowerCase()) {
+            case "new folder":
+                locator = "//span[.='New folder']";
+                break;
+            default:
+                throw new RuntimeException("NO SUCH MENU OPTION");
+        }
+        Driver.getDriver().findElement(By.xpath(locator)).click();
+    }
+
+    @FindBy(css = "input#view11-input-folder")
+    public WebElement folderNameInput;
+
+    public String folderName;
+
+    public void writeFolderName(String name) {
+        folderNameInput.sendKeys(name);
+        folderName = name;
+    }
+
+    @FindBy(css = "input[class='icon-confirm']")
+    public WebElement submitIcon;
+
+    public boolean folderIsDisplayed() {
+        return Driver.getDriver().findElement(By.xpath("//span[@class='innernametext' and .='"
+                + folderName + "']")).isDisplayed();
+    }
+
+    @FindBy(xpath = "//label[@for='select_all_files']")
+    public WebElement allFilesCheckbox;
+
+    @FindBy(xpath = "//tbody[@id='fileList']//label")
+    public List<WebElement> allCheckBoxesFromTable;
+
+    public boolean allFilesSelected() {
+        String info = Driver.getDriver().findElement(By.xpath("(//th[@id='headerName' and @class='column-name']//span)[1]")).getText();
+        int allCheckBoxCount = 0;
+        for (int i = 0; i < info.length(); i++) {
+            if (Character.isDigit(info.charAt(i))) {
+                allCheckBoxCount += Integer.parseInt("" + info.charAt(i));
+            }
+        }
+        return allCheckBoxesFromTable.size() == allCheckBoxCount;
+    }
 
 }
